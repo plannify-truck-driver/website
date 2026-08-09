@@ -1,0 +1,76 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useTranslations, getLocale } from '../i18n/utils';
+import { locales } from '../i18n/translations';
+
+interface Props {
+	active?: 'chauffeurs' | 'technique';
+}
+
+const { active = 'chauffeurs' } = Astro.props;
+const lang = getLocale(Astro.currentLocale);
+const t = useTranslations(lang);
+
+const localizedPath = Astro.url.pathname.replace(/^\/(fr|en)(\/|$)/, '/');
+const localeLabels: Record<string, string> = { fr: 'FR', en: 'EN' };
+---
+
+<header class="border-b border-neutral-200">
+	<div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+		<img src="/images/logo.png" alt="Plannify" class="h-4 cursor-pointer" />
+
+		<!-- <nav class="flex items-center gap-1 rounded-full bg-neutral-100 p-1 text-sm font-medium">
+			<a
+				href="/"
+				class={`rounded-full px-4 py-1.5 transition-colors ${
+					active === 'chauffeurs'
+						? 'bg-white text-neutral-900 shadow-sm'
+						: 'text-neutral-500 hover:text-neutral-900'
+				}`}
+			>
+				Chauffeurs
+			</a>
+			<a
+				href="/technique"
+				class={`rounded-full px-4 py-1.5 transition-colors ${
+					active === 'technique'
+						? 'bg-white text-neutral-900 shadow-sm'
+						: 'text-neutral-500 hover:text-neutral-900'
+				}`}
+			>
+				Technique
+			</a>
+		</nav> -->
+
+		<div class="flex items-center gap-4">
+			<div class="flex items-center gap-1 text-sm font-medium text-neutral-500">
+				{
+					locales.map((locale, i) => (
+						<>
+							{i > 0 && <span class="text-neutral-300">/</span>}
+							<a
+								href={getRelativeLocaleUrl(locale, localizedPath)}
+								class={
+									locale === lang
+										? 'text-neutral-900'
+										: 'hover:text-neutral-900 transition-colors'
+								}
+							>
+								{localeLabels[locale]}
+							</a>
+						</>
+					))
+				}
+			</div>
+
+			<a
+				href="https://driver.plannify.be"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="hidden rounded-lg bg-primary-600 leading-none px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 sm:inline-block"
+			>
+				{t.header.tryApp}
+			</a>
+		</div>
+	</div>
+</header>

@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #eef0fd;
+  --color-primary-100: #dce2fb;
+  --color-primary-600: #506ced;
+  --color-primary-700: #445cc9;
+
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+body,
+header {
+  background-color: #fafafc;
+}

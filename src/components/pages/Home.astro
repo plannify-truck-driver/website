@@ -1,0 +1,305 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import { Play, Coffee, Check, FileText, Lock, Globe, Handshake, Save, Gift, LogIn, LogOut, ArrowRight } from '@lucide/astro';
+import { useTranslations, getLocale } from '../../i18n/utils';
+import { intlLocales } from '../../i18n/translations';
+
+const lang = getLocale(Astro.currentLocale);
+const t = useTranslations(lang);
+
+const trustIcons = [Globe, Handshake, Save, Gift];
+const trust = t.trust.map((item, i) => ({ ...item, icon: trustIcons[i] }));
+
+const today = new Date();
+
+function mondayOfCurrentWeek(date: Date) {
+	const d = new Date(date);
+	const day = d.getDay();
+	d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
+	return d;
+}
+
+function addDays(date: Date, n: number) {
+	const d = new Date(date);
+	d.setDate(d.getDate() + n);
+	return d;
+}
+
+const weekdayFormatter = new Intl.DateTimeFormat(intlLocales[lang], { weekday: 'short' });
+const monthFormatter = new Intl.DateTimeFormat(intlLocales[lang], { month: 'long' });
+
+function formatDay(date: Date) {
+	return `${weekdayFormatter.format(date)} ${date.getDate()} ${monthFormatter.format(date)}`;
+}
+
+const weekStart = mondayOfCurrentWeek(today);
+
+const detail = [
+	{ start: '10:07', end: '18:09', repos: '1h 15min', total: '6h 47min' },
+	{ start: '07:00', end: '18:00', repos: '45min', total: '10h 15min' },
+	{ start: '05:49', end: '17:09', repos: '45min', total: '10h 35min' },
+	{ start: '08:00', end: '17:00', repos: '1h', total: '8h' },
+	{ start: '06:00', end: '17:54', repos: '1h', total: '10h 54min' },
+].map((d, i) => ({ date: formatDay(addDays(weekStart, i)), ...d }));
+
+const week = detail.slice(2).map((d) => ({
+	day: d.date,
+	start: d.start,
+	end: d.end,
+	pause: d.repos,
+	total: d.total,
+}));
+---
+
+<Layout title={t.meta.title} description={t.meta.description}>
+	<Header active="chauffeurs" />
+
+	<main>
+		<!-- Hero -->
+		<section class="mx-auto grid max-w-6xl w-full items-center gap-16 px-5 py-24 lg:grid-cols-2">
+			<div>
+				<p class="font-mono text-sm uppercase tracking-widest text-emerald-600 font-semibold">
+					{t.hero.eyebrow}
+				</p>
+				<h1 class="mt-4 text-4xl font-bold leading-[1.05] tracking-tight text-neutral-900 sm:text-6xl">
+					{t.hero.title}
+				</h1>
+				<p class="mt-6 max-w-md text-lg text-neutral-600">
+					{t.hero.description}
+				</p>
+				<div class="mt-8 flex flex-wrap items-center gap-4">
+					<a
+						href="https://driver.plannify.be/authentication/registration"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="rounded-lg bg-primary-600 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-primary-700"
+					>
+						{t.hero.ctaPrimary}
+					</a>
+					<!-- <a
+						href="/technique"
+						class="rounded-full border border-neutral-300 px-6 py-3 text-sm font-semibold text-neutral-900 transition-colors hover:border-neutral-400"
+					>
+						{t.hero.ctaSecondary} <ArrowRight class="inline h-4 w-4" />
+					</a> -->
+				</div>
+			</div>
+
+			<div class="flex items-center justify-center w-full">
+			<div class="rounded-3xl border border-neutral-200 bg-white p-4 shadow-xl shadow-neutral-200/50 w-[400px] max-w-full flex flex-col gap-[14px]">
+				<div class="mx-auto h-1 w-[110px] rounded-full bg-neutral-200"></div>
+				<h2 class="text-xl font-bold text-neutral-900">{t.dashboard.title}</h2>
+
+				<div class="flex items-center gap-3 rounded-2xl bg-primary-600 p-4 text-white">
+					<span class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20">
+						<Play class="h-4 w-4 fill-white text-white" />
+					</span>
+					<div>
+						<p class="text-sm font-semibold">{t.dashboard.startButton}</p>
+						<p class="text-xs text-primary-100">{t.dashboard.noSession}</p>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-2 gap-3">
+					<div class="rounded-xl border border-neutral-200 p-3">
+						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
+							{t.dashboard.workedDays}
+						</p>
+						<p class="mt-1 text-xl font-bold text-neutral-900">6 <span class="text-neutral-500">/ 7</span></p>
+					</div>
+					<div class="rounded-xl border border-neutral-200 p-3">
+						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
+							{t.dashboard.monthWork}
+						</p>
+						<p class="mt-1 text-xl font-bold text-neutral-900">149h 16m</p>
+					</div>
+				</div>
+
+
+				<div class="flex flex-col gap-2">
+					<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
+						{t.dashboard.weekDetail}
+					</p>
+					<div class="space-y-2">
+						{
+							week.map((d) => (
+								<div class="rounded-xl border border-neutral-200 p-3">
+									<div class="flex items-center justify-between text-sm">
+										<span class="font-semibold text-neutral-900">{d.day}</span>
+										<span class="font-semibold text-neutral-900">{d.total}</span>
+									</div>
+									<div class="mt-1.5 flex items-center gap-2 text-xs">
+										<span class="flex items-center gap-1 rounded-md bg-[#eef0fd] px-1.5 py-0.5 text-primary-600">
+											<LogIn class="h-3 w-3" /> {d.start}
+										</span>
+										<span class="flex items-center gap-1 rounded-md bg-[#eef0fd] px-1.5 py-0.5 text-primary-600">
+											<LogOut class="h-3 w-3" /> {d.end}
+										</span>
+										<span class="flex items-center gap-1 rounded-md bg-[#e7f4f2] px-1.5 py-0.5 text-[#0e8074]">
+											<Coffee class="h-3 w-3" /> {d.pause}
+										</span>
+									</div>
+								</div>
+							))
+						}
+					</div>
+				</div>
+			</div>
+			</div>
+		</section>
+
+		<!-- Comment ça marche -->
+		<section class="bg-white border-y border-[#E8E9EF]">
+			<div class="mx-auto max-w-6xl px-5 py-18">
+				<p class="font-mono text-sm uppercase tracking-widest text-primary-600">{t.howItWorks.eyebrow}</p>
+				<h2 class="mt-2 text-[28px] font-bold tracking-tight text-neutral-900">
+					{t.howItWorks.title}
+				</h2>
+
+				<div class="mt-10 grid gap-6 sm:grid-cols-3">
+					{
+						t.steps.map((s) => (
+							<div class="rounded-2xl border border-neutral-200 bg-[#fafafc] p-6">
+								<span class="font-mono text-sm font-semibold text-primary-600">{s.n}</span>
+								<h3 class="mt-3 text-xl font-bold text-neutral-900">{s.title}</h3>
+								<p class="mt-2 text-sm leading-relaxed text-neutral-600">{s.text}</p>
+							</div>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<!-- Pourquoi Plannify -->
+		<section class="mx-auto grid max-w-6xl items-start gap-10 px-6 py-20 lg:grid-cols-2">
+			<div class="flex flex-col gap-5">
+				<p class="font-mono text-sm uppercase tracking-widest text-primary-600 leading-none">{t.whyPlannify.eyebrow}</p>
+				<h2 class="text-[28px] font-bold leading-tight tracking-tight text-neutral-900 leading-none">
+					{t.whyPlannify.title}
+				</h2>
+
+				<ul class="space-y-5">
+					{
+						t.benefits.map((b) => (
+							<li class="flex gap-3">
+								<span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e7f4f2] text-[#0e8074]">
+									<Check class="h-3 w-3" />
+								</span>
+								<div>
+									<p class="font-bold text-neutral-900">{b.title}</p>
+									<p class="text-sm text-neutral-600">{b.text}</p>
+								</div>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<div class="flex flex-col gap-4 rounded-2xl border border-neutral-200 p-6 shadow-lg shadow-neutral-200/50 bg-white">
+				<div class="flex items-center justify-between">
+					<div class="flex items-center gap-3">
+						<span class="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-50 text-rose-500">
+							<FileText class="h-5 w-5" />
+						</span>
+						<div>
+							<p class="font-bold text-neutral-900">{t.pdfCard.monthLabel}</p>
+							<p class="text-xs text-neutral-500">{t.pdfCard.reportType}</p>
+						</div>
+					</div>
+					<span class="flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+						<Lock class="h-3 w-3" /> {t.pdfCard.definitive}
+					</span>
+				</div>
+
+				<span class="border-t border-neutral-200"></span>
+
+				<div class="space-y-2 text-sm">
+					{
+						detail.map((d) => (
+							<div class="grid grid-cols-3 items-center justify-between font-mono text-xs text-neutral-500">
+								<span class="shrink-0 text-neutral-700">{d.date}</span>
+								<span>{d.start} → {d.end}</span>
+								<span class="font-semibold text-neutral-900">{d.total}</span>
+							</div>
+						))
+					}
+				</div>
+
+				<span class="border-t border-neutral-200"></span>
+
+				<div class="flex items-center justify-between">
+					<span class="font-mono text-[11px] uppercase tracking-wider text-neutral-400">
+						{t.pdfCard.totalMonth}
+					</span>
+					<span class="text-xl font-bold font-mono text-neutral-900">{t.pdfCard.totalValue}</span>
+				</div>
+			</div>
+		</section>
+
+		<!-- L'application -->
+		<section class="bg-white border-y border-[#E8E9EF]">
+			<div class="mx-auto grid max-w-6xl items-start gap-10 px-6 py-20 ">
+				<div class="flex flex-col gap-5">
+					<p class="font-mono text-sm uppercase tracking-widest text-primary-600 leading-none">{t.appSection.eyebrow}</p>
+					<h2 class="text-[28px] font-bold tracking-tight text-neutral-900 leading-none">
+						{t.appSection.title}
+					</h2>
+					<p class="text-lg text-neutral-600">
+						{t.appSection.subtitle}
+					</p>
+				</div>
+				<img src="/images/dashboard.png" alt="Plannify" class="rounded-2xl border border-neutral-200 shadow-lg shadow-neutral-200/50" />
+			</div>
+		</section>
+
+		<!-- Vos données respectées -->
+		<section class="flex flex-col gap-10 mx-auto max-w-6xl px-6 py-20">
+			<div class="flex flex-col gap-3">
+				<p class="font-mono text-sm uppercase tracking-widest text-primary-600 leading-none">
+					{t.trustSection.eyebrow}
+				</p>
+				<h2 class="text-[28px] max-w-2xl font-bold leading-tight tracking-tight text-neutral-900 leading-none">
+					{t.trustSection.title}
+				</h2>
+			</div>
+
+			<div class="grid gap-5 grid-cols-2 md:grid-cols-4">
+				{
+					trust.map((item) => (
+						<div class="rounded-2xl border border-neutral-200 p-6 bg-white">
+							<span class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+								<item.icon class="h-5 w-5" />
+							</span>
+							<h3 class="mt-4 font-bold text-neutral-900">{item.title}</h3>
+							<p class="mt-2 text-sm text-neutral-600">{item.text}</p>
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<!-- CTA -->
+		<section class="bg-primary-600 py-18">
+			<div class="flex flex-col gap-5 mx-auto max-w-2xl px-6 text-center">
+				<h2 class="text-[28px] font-bold tracking-tight text-white leading-none">{t.cta.title}</h2>
+				<p class="text-lg text-primary-100 leading-none">
+					{t.cta.subtitle}
+				</p>
+				<div>
+					<a
+						href="https://driver.plannify.be/authentication/registration"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-block rounded-lg bg-white px-7 py-3 text-base font-semibold text-primary-600 transition-colors hover:bg-primary-50"
+					>
+						{t.cta.button}
+					</a>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<Footer />
+</Layout>

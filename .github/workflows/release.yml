@@ -1,0 +1,22 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    uses: plannify-truck-driver/github-actions/.github/workflows/build-push-tag.yml@main
+    secrets: inherit
+    with:
+      use_gitleaks: false
+      use_sast: false
+      images: |
+        [
+          {"image": "plannify-truck-driver/website"}
+        ]

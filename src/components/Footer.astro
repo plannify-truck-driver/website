@@ -1,0 +1,17 @@
+---
+import { useTranslations, getLocale } from '../i18n/utils';
+
+const lang = getLocale(Astro.currentLocale);
+const t = useTranslations(lang);
+---
+
+<footer>
+	<div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
+		<img src="/images/logo.png" alt="Plannify" class="h-4 cursor-pointer" />
+		<p class="text-sm text-neutral-400">{t.footer.tagline}</p>
+		<div class="flex items-center gap-6 text-sm">
+			<a href="https://github.com/plannify-truck-driver" target="_blank" rel="noopener noreferrer">GitHub</a>
+			<a href="mailto:contact@plannify.be">Contact</a>
+		</div>
+	</div>
+</footer>
