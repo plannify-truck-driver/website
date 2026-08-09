@@ -20,3 +20,7 @@ jobs:
         [
           {"image": "plannify-truck-driver/website"}
         ]
+      infra_targets: |
+        [
+          {"repo": "plannify-truck-driver-app/infrastructure", "file": "yaml-applications/prod/website/deployment.yaml", "image": "ghcr.io/plannify-truck-driver/website"}
+        ]
