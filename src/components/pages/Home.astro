@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../Header.astro';
 import Footer from '../Footer.astro';
-import { Play, Coffee, Check, FileText, Lock, Globe, Handshake, Save, Gift, LogIn, LogOut, ArrowRight } from '@lucide/astro';
+import { Play, Square, Coffee, Check, FileText, Lock, Globe, Handshake, Save, Gift, LogIn, LogOut, ArrowRight } from '@lucide/astro';
 import { useTranslations, getLocale } from '../../i18n/utils';
 import { intlLocales } from '../../i18n/translations';
 
@@ -44,7 +44,7 @@ const detail = [
 	{ start: '06:00', end: '17:54', repos: '1h', total: '10h 54min' },
 ].map((d, i) => ({ date: formatDay(addDays(weekStart, i)), ...d }));
 
-const week = detail.slice(2).map((d) => ({
+const week = detail.slice(0, 3).map((d) => ({
 	day: d.date,
 	start: d.start,
 	end: d.end,
@@ -92,28 +92,49 @@ const week = detail.slice(2).map((d) => ({
 				<div class="mx-auto h-1 w-[110px] rounded-full bg-neutral-200"></div>
 				<h2 class="text-xl font-bold text-neutral-900">{t.dashboard.title}</h2>
 
-				<div class="flex items-center gap-3 rounded-2xl bg-primary-600 p-4 text-white">
-					<span class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20">
-						<Play class="h-4 w-4 fill-white text-white" />
+				<button
+					type="button"
+					id="day-toggle"
+					data-start-label={t.dashboard.startButton}
+					data-end-label={t.dashboard.endButton}
+					data-idle-subtitle={t.dashboard.noSession}
+					data-running-subtitle={t.dashboard.sessionRunning}
+					data-today-label={t.dashboard.today}
+					class="flex w-full cursor-pointer items-center gap-3 rounded-2xl bg-primary-600 p-4 text-left text-white transition-colors hover:bg-primary-700"
+				>
+					<span class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/20">
+						<Play id="day-toggle-icon-play" class="h-4 w-4 text-white" />
+						<Square id="day-toggle-icon-stop" class="hidden h-4 w-4 fill-white text-white" />
+						<span
+							id="day-toggle-live-dot"
+							class="hidden absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full bg-rose-400 ring-2 ring-primary-600"
+						></span>
 					</span>
 					<div>
-						<p class="text-sm font-semibold">{t.dashboard.startButton}</p>
-						<p class="text-xs text-primary-100">{t.dashboard.noSession}</p>
+						<p id="day-toggle-title" class="text-sm font-semibold">{t.dashboard.startButton}</p>
+						<p id="day-toggle-subtitle" class="font-mono text-xs tabular-nums text-primary-100">
+							{t.dashboard.noSession}
+						</p>
 					</div>
-				</div>
+				</button>
 
-				<div class="grid grid-cols-2 gap-3">
-					<div class="rounded-xl border border-neutral-200 p-3">
-						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
-							{t.dashboard.workedDays}
-						</p>
-						<p class="mt-1 text-xl font-bold text-neutral-900">6 <span class="text-neutral-500">/ 7</span></p>
-					</div>
-					<div class="rounded-xl border border-neutral-200 p-3">
-						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
-							{t.dashboard.monthWork}
-						</p>
-						<p class="mt-1 text-xl font-bold text-neutral-900">149h 16m</p>
+				<div class="flex flex-col gap-2">
+					<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
+						{t.dashboard.summary}
+					</p>
+					<div class="grid grid-cols-2 gap-3">
+						<div class="rounded-xl border border-neutral-200 p-3">
+							<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
+								{t.dashboard.workedDays}
+							</p>
+							<p class="mt-1 text-xl font-bold text-neutral-900">{week.length} <span class="text-neutral-500">/ 7</span></p>
+						</div>
+						<div class="rounded-xl border border-neutral-200 p-3">
+							<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
+								{t.dashboard.monthWork}
+							</p>
+							<p class="mt-1 text-xl font-bold text-neutral-900">149h 16m</p>
+						</div>
 					</div>
 				</div>
 
@@ -122,7 +143,7 @@ const week = detail.slice(2).map((d) => ({
 					<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
 						{t.dashboard.weekDetail}
 					</p>
-					<div class="space-y-2">
+					<div id="week-list" class="space-y-2">
 						{
 							week.map((d) => (
 								<div class="rounded-xl border border-neutral-200 p-3">
@@ -145,10 +166,129 @@ const week = detail.slice(2).map((d) => ({
 							))
 						}
 					</div>
+
+					<template id="day-card-template">
+						<div class="rounded-xl border border-primary-200 bg-primary-50/60 p-3 [animation:day-card-in_0.4s_ease-out]">
+							<div class="flex items-center justify-between text-sm">
+								<span class="font-semibold text-neutral-900" data-slot="day"></span>
+								<span class="font-semibold text-neutral-900" data-slot="total"></span>
+							</div>
+							<div class="mt-1.5 flex items-center gap-2 text-xs">
+								<span class="flex items-center gap-1 rounded-md bg-[#eef0fd] px-1.5 py-0.5 text-primary-600">
+									<LogIn class="h-3 w-3" /> <span data-slot="start"></span>
+								</span>
+								<span class="flex items-center gap-1 rounded-md bg-[#eef0fd] px-1.5 py-0.5 text-primary-600">
+									<LogOut class="h-3 w-3" /> <span data-slot="end"></span>
+								</span>
+								<span class="flex items-center gap-1 rounded-md bg-[#e7f4f2] px-1.5 py-0.5 text-[#0e8074]">
+									<Coffee class="h-3 w-3" /> <span data-slot="pause"></span>
+								</span>
+							</div>
+						</div>
+					</template>
 				</div>
 			</div>
 			</div>
 		</section>
+
+		<script>
+			const toggle = document.getElementById('day-toggle');
+			const playIcon = document.getElementById('day-toggle-icon-play');
+			const stopIcon = document.getElementById('day-toggle-icon-stop');
+			const liveDot = document.getElementById('day-toggle-live-dot');
+			const titleEl = document.getElementById('day-toggle-title');
+			const subtitleEl = document.getElementById('day-toggle-subtitle');
+			const weekList = document.getElementById('week-list');
+			const cardTemplate = document.getElementById('day-card-template');
+
+			if (
+				toggle &&
+				playIcon &&
+				stopIcon &&
+				titleEl &&
+				subtitleEl &&
+				weekList &&
+				cardTemplate instanceof HTMLTemplateElement
+			) {
+				const { startLabel, endLabel, idleSubtitle, runningSubtitle, todayLabel } = toggle.dataset;
+
+				let startedAt: number | null = null;
+				let intervalId: number | undefined;
+
+				const pad = (n: number) => String(n).padStart(2, '0');
+
+				const formatClock = (date: Date) => `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+
+				const formatElapsed = (ms: number) => {
+					const totalSeconds = Math.floor(ms / 1000);
+					return `${pad(Math.floor(totalSeconds / 60))}:${pad(totalSeconds % 60)}`;
+				};
+
+				const formatDuration = (totalMinutes: number) => {
+					if (totalMinutes < 60) return `${totalMinutes}min`;
+					const h = Math.floor(totalMinutes / 60);
+					const m = totalMinutes % 60;
+					return m === 0 ? `${h}h` : `${h}h ${m}min`;
+				};
+
+				const tick = () => {
+					if (startedAt === null) return;
+					subtitleEl.textContent = `${runningSubtitle} · ${formatElapsed(Date.now() - startedAt)}`;
+				};
+
+				const addDayCard = (day: string, start: string, end: string, totalMinutes: number) => {
+					const fragment = cardTemplate.content.cloneNode(true) as DocumentFragment;
+					const dayEl = fragment.querySelector('[data-slot="day"]');
+					const totalEl = fragment.querySelector('[data-slot="total"]');
+					const startEl = fragment.querySelector('[data-slot="start"]');
+					const endEl = fragment.querySelector('[data-slot="end"]');
+					const pauseSlot = fragment.querySelector('[data-slot="pause"]');
+
+					if (dayEl) dayEl.textContent = day;
+					if (totalEl) totalEl.textContent = formatDuration(totalMinutes);
+					if (startEl) startEl.textContent = start;
+					if (endEl) endEl.textContent = end;
+					pauseSlot?.parentElement?.remove();
+
+					weekList.prepend(fragment);
+				};
+
+				const start = () => {
+					startedAt = Date.now();
+
+					playIcon.classList.add('hidden');
+					stopIcon.classList.remove('hidden');
+					liveDot?.classList.remove('hidden');
+
+					titleEl.textContent = endLabel ?? '';
+					tick();
+					intervalId = window.setInterval(tick, 1000);
+				};
+
+				const stop = () => {
+					if (intervalId) window.clearInterval(intervalId);
+					if (startedAt === null) return;
+
+					const startDate = new Date(startedAt);
+					const endDate = new Date();
+					const totalMinutes = Math.max(1, Math.round((endDate.getTime() - startDate.getTime()) / 60000));
+
+					addDayCard(todayLabel ?? '', formatClock(startDate), formatClock(endDate), totalMinutes);
+
+					playIcon.classList.remove('hidden');
+					stopIcon.classList.add('hidden');
+					liveDot?.classList.add('hidden');
+
+					titleEl.textContent = startLabel ?? '';
+					subtitleEl.textContent = idleSubtitle ?? '';
+					startedAt = null;
+				};
+
+				toggle.addEventListener('click', () => {
+					startedAt === null ? start() : stop();
+				});
+			}
+		</script>
 
 		<!-- Comment ça marche -->
 		<section class="bg-white border-y border-[#E8E9EF]">
