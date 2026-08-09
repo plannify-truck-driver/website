@@ -44,7 +44,7 @@ const detail = [
 	{ start: '06:00', end: '17:54', repos: '1h', total: '10h 54min' },
 ].map((d, i) => ({ date: formatDay(addDays(weekStart, i)), ...d }));
 
-const week = detail.slice(2).map((d) => ({
+const week = detail.slice(0, 3).map((d) => ({
 	day: d.date,
 	start: d.start,
 	end: d.end,
@@ -94,7 +94,7 @@ const week = detail.slice(2).map((d) => ({
 
 				<div class="flex items-center gap-3 rounded-2xl bg-primary-600 p-4 text-white">
 					<span class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20">
-						<Play class="h-4 w-4 fill-white text-white" />
+						<Play class="h-5 w-5 text-white" />
 					</span>
 					<div>
 						<p class="text-sm font-semibold">{t.dashboard.startButton}</p>
@@ -107,7 +107,7 @@ const week = detail.slice(2).map((d) => ({
 						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
 							{t.dashboard.workedDays}
 						</p>
-						<p class="mt-1 text-xl font-bold text-neutral-900">6 <span class="text-neutral-500">/ 7</span></p>
+						<p class="mt-1 text-xl font-bold text-neutral-900">{week.length} <span class="text-neutral-500">/ 7</span></p>
 					</div>
 					<div class="rounded-xl border border-neutral-200 p-3">
 						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
