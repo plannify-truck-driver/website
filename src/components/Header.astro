@@ -15,9 +15,9 @@ const localizedPath = Astro.url.pathname.replace(/^\/(fr|en)(\/|$)/, '/');
 const localeLabels: Record<string, string> = { fr: 'FR', en: 'EN' };
 ---
 
-<header class="border-b border-neutral-200">
+<header class="sticky top-0 z-40 border-b border-rule/70 bg-paper/85 backdrop-blur-md">
 	<div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-		<img src="/images/logo.png" alt="Plannify" class="h-4 cursor-pointer" />
+		<a href={getRelativeLocaleUrl(lang, '/')} aria-label="Plannify"><img src="/images/logo.png" alt="Plannify" class="h-4" /></a>
 
 		<!-- <nav class="flex items-center gap-1 rounded-full bg-neutral-100 p-1 text-sm font-medium">
 			<a
@@ -43,17 +43,17 @@ const localeLabels: Record<string, string> = { fr: 'FR', en: 'EN' };
 		</nav> -->
 
 		<div class="flex items-center gap-4">
-			<div class="flex items-center gap-1 text-sm font-medium text-neutral-500">
+			<div class="flex items-center gap-1 font-mono text-xs font-medium text-ink-mute">
 				{
 					locales.map((locale, i) => (
 						<>
-							{i > 0 && <span class="text-neutral-300">/</span>}
+							{i > 0 && <span class="text-rule">/</span>}
 							<a
 								href={getRelativeLocaleUrl(locale, localizedPath)}
 								class={
 									locale === lang
-										? 'text-neutral-900'
-										: 'hover:text-neutral-900 transition-colors'
+										? 'text-ink'
+										: 'hover:text-ink transition-colors'
 								}
 							>
 								{localeLabels[locale]}
@@ -64,10 +64,23 @@ const localeLabels: Record<string, string> = { fr: 'FR', en: 'EN' };
 			</div>
 
 			<a
+				href="https://github.com/plannify-truck-driver"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="GitHub"
+				class="-m-1.5 p-1.5 text-ink-mute transition-colors hover:text-ink"
+			>
+				<!-- Octicons mark-github -->
+				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="h-[18px] w-[18px]">
+					<path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z" />
+				</svg>
+			</a>
+
+			<a
 				href="https://driver.plannify.be"
 				target="_blank"
 				rel="noopener noreferrer"
-				class="hidden rounded-lg bg-primary-600 leading-none px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-700 sm:inline-block"
+				class="hidden rounded-md bg-ink px-4 py-2 text-sm font-medium leading-none text-paper transition duration-200 hover:bg-ink/85 active:translate-y-px sm:inline-block"
 			>
 				{t.header.tryApp}
 			</a>

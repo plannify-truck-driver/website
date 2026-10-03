@@ -27,6 +27,7 @@ export const translations = {
         "Un bouton pour démarrer la journée, le même pour la terminer. À la fin du mois, votre relevé d'heures PDF vous attend, tout simplement.",
       ctaPrimary: "Commencer gratuitement",
       ctaSecondary: "Côté technique",
+      ctaHow: "Voir comment ça marche",
     },
     dashboard: {
       title: "Tableau de bord",
@@ -34,8 +35,10 @@ export const translations = {
       noSession: "Aucune journée en cours",
       summary: "Résumé",
       workedDays: "Jours travaillés",
+      thisWeek: "Cette semaine",
       monthWork: "Travail mois",
       weekDetail: "Détail de la semaine",
+      nav: ["Accueil", "Journées", "Documents", "Compte"],
     },
     howItWorks: {
       eyebrow: "Comment ça marche",
@@ -44,16 +47,19 @@ export const translations = {
     steps: [
       {
         n: "01",
+        time: "06:00",
         title: "Démarrez",
         text: "Au début de votre journée, appuyez sur le bouton. C'est tout — Plannify note l'heure pour vous.",
       },
       {
         n: "02",
+        time: "18:00",
         title: "Terminez",
         text: "Le soir, le même bouton clôture la journée. Pauses et repos nocturnes sont pris en compte.",
       },
       {
         n: "03",
+        time: "31/08",
         title: "Recevez votre relevé",
         text: "À la fin du mois, votre relevé d'heures PDF est généré automatiquement, prêt à transmettre.",
       },
@@ -92,6 +98,8 @@ export const translations = {
       title: "Simple sur téléphone, claire sur ordinateur.",
       subtitle:
         "Votre semaine d'un coup d'œil : heures de début, de fin, pauses et total travaillé.",
+      imageAlt:
+        "Tableau de bord Plannify sur ordinateur : résumé du mois et détail de la semaine.",
     },
     trustSection: {
       eyebrow: "Vos données, respectées",
@@ -142,15 +150,18 @@ export const translations = {
         "One button to start your day, the same one to end it. At the end of the month, your PDF time report is waiting for you — that simple.",
       ctaPrimary: "Get started for free",
       ctaSecondary: "Technical side",
+      ctaHow: "See how it works",
     },
     dashboard: {
       title: "Dashboard",
-      startButton: "Start my day",
-      noSession: "No active session",
+      startButton: "Start my workday",
+      noSession: "No ongoing workday",
       summary: "Summary",
-      workedDays: "Days worked",
-      monthWork: "Hours this month",
-      weekDetail: "This week's detail",
+      workedDays: "Worked days",
+      thisWeek: "This week",
+      monthWork: "Month worked",
+      weekDetail: "Week detail",
+      nav: ["Home", "Workdays", "Documents", "Account"],
     },
     howItWorks: {
       eyebrow: "How it works",
@@ -159,16 +170,19 @@ export const translations = {
     steps: [
       {
         n: "01",
+        time: "6:00 am",
         title: "Start",
         text: "At the start of your day, tap the button. That's it — Plannify logs the time for you.",
       },
       {
         n: "02",
+        time: "6:00 pm",
         title: "Finish",
         text: "In the evening, the same button ends your day. Breaks and night rest are accounted for.",
       },
       {
         n: "03",
+        time: "08/31",
         title: "Get your report",
         text: "At the end of the month, your PDF time report is generated automatically, ready to send.",
       },
@@ -207,6 +221,8 @@ export const translations = {
       title: "Simple on phone, clear on desktop.",
       subtitle:
         "Your week at a glance: start times, end times, breaks and total hours worked.",
+      imageAlt:
+        "Plannify dashboard on desktop: monthly summary and weekly detail.",
     },
     trustSection: {
       eyebrow: "Your data, respected",

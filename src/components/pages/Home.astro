@@ -2,15 +2,27 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../Header.astro';
 import Footer from '../Footer.astro';
-import { Play, Coffee, Check, FileText, Lock, Globe, Handshake, Save, Gift, LogIn, LogOut, ArrowRight } from '@lucide/astro';
+import { Image } from 'astro:assets';
+import dashboardScreenshot from '../../assets/dashboard.png';
+import {
+	Play,
+	Coffee,
+	LogIn,
+	LogOut,
+	ArrowRight,
+	ArrowDown,
+	ChevronLeft,
+	ChevronRight,
+	Truck,
+	CalendarSearch,
+	FileText,
+	User,
+} from '@lucide/astro';
 import { useTranslations, getLocale } from '../../i18n/utils';
 import { intlLocales } from '../../i18n/translations';
 
 const lang = getLocale(Astro.currentLocale);
 const t = useTranslations(lang);
-
-const trustIcons = [Globe, Handshake, Save, Gift];
-const trust = t.trust.map((item, i) => ({ ...item, icon: trustIcons[i] }));
 
 const today = new Date();
 
@@ -44,261 +56,298 @@ const detail = [
 	{ start: '06:00', end: '17:54', repos: '1h', total: '10h 54min' },
 ].map((d, i) => ({ date: formatDay(addDays(weekStart, i)), ...d }));
 
-const week = detail.slice(0, 3).map((d) => ({
-	day: d.date,
-	start: d.start,
-	end: d.end,
-	pause: d.repos,
-	total: d.total,
-}));
+// Phone mock mirrors driver.plannify.be's dashboard
+const shortDayFormatter = new Intl.DateTimeFormat(intlLocales[lang], { weekday: 'short', day: 'numeric', month: 'short' });
+const rangeFormatter = new Intl.DateTimeFormat(intlLocales[lang], { day: 'numeric', month: 'short' });
+const monthYearFormatter = new Intl.DateTimeFormat(intlLocales[lang], { month: 'long', year: 'numeric' });
+
+const weekRange = `${rangeFormatter.format(weekStart)} - ${rangeFormatter.format(addDays(weekStart, 6))}`;
+const week = detail.slice(0, 3).map((d, i) => ({ ...d, day: shortDayFormatter.format(addDays(weekStart, i)) }));
+const navIcons = [Truck, CalendarSearch, FileText, User];
+
+const registerUrl = 'https://driver.plannify.be/authentication/registration';
 ---
 
 <Layout title={t.meta.title} description={t.meta.description}>
 	<Header active="chauffeurs" />
 
-	<main>
+	<main id="main">
 		<!-- Hero -->
-		<section class="mx-auto grid max-w-6xl w-full items-center gap-16 px-5 py-24 lg:grid-cols-2">
-			<div>
-				<p class="font-mono text-sm uppercase tracking-widest text-emerald-600 font-semibold">
-					{t.hero.eyebrow}
-				</p>
-				<h1 class="mt-4 text-4xl font-bold leading-[1.05] tracking-tight text-neutral-900 sm:text-6xl">
+		<section class="mx-auto grid w-full max-w-6xl items-center gap-14 px-6 pt-20 pb-24 lg:grid-cols-12 lg:pt-28 lg:pb-32">
+			<div class="lg:col-span-7">
+				<p class="label">{t.hero.eyebrow}</p>
+				<h1 class="mt-6 text-5xl font-bold leading-[0.95] tracking-[-0.035em] text-ink sm:text-7xl">
 					{t.hero.title}
 				</h1>
-				<p class="mt-6 max-w-md text-lg text-neutral-600">
+				<p class="mt-8 max-w-[34rem] text-lg leading-relaxed text-ink-soft">
 					{t.hero.description}
 				</p>
-				<div class="mt-8 flex flex-wrap items-center gap-4">
-					<a
-						href="https://driver.plannify.be/authentication/registration"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="rounded-lg bg-primary-600 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-primary-700"
-					>
+				<div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+					<a href={registerUrl} target="_blank" rel="noopener noreferrer" class="btn-primary group">
 						{t.hero.ctaPrimary}
+						<ArrowRight class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
 					</a>
-					<!-- <a
-						href="/technique"
-						class="rounded-full border border-neutral-300 px-6 py-3 text-sm font-semibold text-neutral-900 transition-colors hover:border-neutral-400"
-					>
-						{t.hero.ctaSecondary} <ArrowRight class="inline h-4 w-4" />
-					</a> -->
+					<a href="#comment" class="group inline-flex items-center gap-2 text-sm font-medium text-ink-soft transition-colors hover:text-ink">
+						{t.hero.ctaHow}
+						<ArrowDown class="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5" />
+					</a>
 				</div>
 			</div>
 
-			<div class="flex items-center justify-center w-full">
-				<div class="rounded-3xl border border-neutral-200 bg-white p-4 shadow-xl shadow-neutral-200/50 w-[400px] max-w-full flex flex-col gap-[14px]">
-					<div class="mx-auto h-1 w-[110px] rounded-full bg-neutral-200"></div>
-					<h2 class="text-xl font-bold text-neutral-900">{t.dashboard.title}</h2>
+			<!-- Phone mock on a logbook grid -->
+			<div class="relative lg:col-span-5">
+				<div
+					aria-hidden="true"
+					class="absolute -inset-x-4 -inset-y-8 rounded-[2rem] border border-rule bg-paper-deep [background-image:linear-gradient(var(--color-rule)_1px,transparent_1px),linear-gradient(90deg,var(--color-rule)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_80%)] sm:-inset-x-10"
+				>
+				</div>
+				<div class="relative mx-auto w-[340px] max-w-full rotate-[1.5deg] overflow-hidden rounded-[2.25rem] border-[6px] border-ink bg-[#f7f7f8] shadow-[0_30px_60px_-30px_rgb(60_52_35/0.55),0_2px_6px_rgb(60_52_35/0.1)]">
+					<div class="flex flex-col gap-4 px-4 pt-6 pb-5">
+						<p class="text-2xl font-bold tracking-tight text-neutral-900">{t.dashboard.title}</p>
 
-					<div class="flex items-center gap-3 rounded-2xl bg-primary-600 p-4 text-white">
-						<span class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20">
-							<Play class="h-5 w-5 text-white" />
-						</span>
-						<div>
-							<p class="text-sm font-semibold">{t.dashboard.startButton}</p>
-							<p class="text-xs text-primary-100">{t.dashboard.noSession}</p>
+						<div class="flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-900">
+							<ChevronLeft class="h-4 w-4 text-neutral-500" />
+							{weekRange}
+							<ChevronRight class="h-4 w-4 text-neutral-500" />
 						</div>
-					</div>
 
-					<div class="flex flex-col gap-2">
-						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
-							{t.dashboard.summary}
-						</p>
-						<div class="grid grid-cols-2 gap-3">
-							<div class="rounded-xl border border-neutral-200 p-3">
-								<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
-									{t.dashboard.workedDays}
-								</p>
-								<p class="mt-1 text-xl font-bold text-neutral-900">{week.length} <span class="text-neutral-500">/ 7</span></p>
+						<div class="flex items-center gap-3 rounded-xl bg-primary-600 p-3 text-white">
+							<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/15">
+								<Play class="h-4 w-4" />
+							</span>
+							<div class="min-w-0 flex-1">
+								<p class="text-sm font-semibold">{t.dashboard.startButton}</p>
+								<p class="text-xs text-white/70">{t.dashboard.noSession}</p>
 							</div>
-							<div class="rounded-xl border border-neutral-200 p-3">
-								<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
-									{t.dashboard.monthWork}
-								</p>
-								<p class="mt-1 text-xl font-bold text-neutral-900">149h 16m</p>
+							<ArrowRight class="h-4 w-4" />
+						</div>
+
+						<div class="flex flex-col gap-2">
+							<p class="font-mono text-[11px] uppercase tracking-wider text-neutral-500">{t.dashboard.summary}</p>
+							<div class="grid grid-cols-2 gap-2">
+								<div class="rounded-xl border border-neutral-200 bg-white p-3">
+									<p class="font-mono text-[10px] uppercase tracking-wider text-neutral-500">{t.dashboard.workedDays}</p>
+									<p class="mt-0.5 text-[11px] text-neutral-500">{t.dashboard.thisWeek}</p>
+									<p class="mt-1 font-mono text-lg font-bold tabular-nums text-neutral-900">{week.length} / 7</p>
+								</div>
+								<div class="rounded-xl border border-neutral-200 bg-white p-3">
+									<p class="font-mono text-[10px] uppercase tracking-wider text-neutral-500">{t.dashboard.monthWork}</p>
+									<p class="mt-1 font-mono text-lg font-bold whitespace-nowrap tabular-nums text-neutral-900">149h 16min</p>
+									<p class="mt-0.5 text-[11px] text-neutral-500">{monthYearFormatter.format(today)}</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="flex flex-col gap-2">
+							<p class="font-mono text-[11px] uppercase tracking-wider text-neutral-500">{t.dashboard.weekDetail}</p>
+							<div class="divide-y divide-neutral-200 rounded-xl border border-neutral-200 bg-white">
+								{
+									week.map((d) => (
+										<div class="px-3 py-2.5">
+											<div class="flex items-center justify-between text-sm text-neutral-900">
+												<span>{d.day}</span>
+												<span class="flex items-center gap-1.5 tabular-nums">
+													{d.total}
+													<ChevronRight class="h-3.5 w-3.5 text-neutral-500" />
+												</span>
+											</div>
+											<div class="mt-1.5 flex items-center gap-1.5 text-[11px] tabular-nums">
+												<span class="flex items-center gap-1 rounded-md bg-primary-50 px-1.5 py-0.5 text-primary-600">
+													<LogIn class="h-3 w-3" /> {d.start}
+												</span>
+												<span class="flex items-center gap-1 rounded-md bg-primary-50 px-1.5 py-0.5 text-primary-600">
+													<LogOut class="h-3 w-3" /> {d.end}
+												</span>
+												<span class="flex items-center gap-1 rounded-md bg-[#e7f4f2] px-1.5 py-0.5 text-[#0e8074]">
+													<Coffee class="h-3 w-3" /> {d.repos}
+												</span>
+											</div>
+										</div>
+									))
+								}
 							</div>
 						</div>
 					</div>
 
-					<div class="flex flex-col gap-2">
-						<p class="font-mono text-xs uppercase tracking-wider text-neutral-400">
-							{t.dashboard.weekDetail}
-						</p>
-						<div class="space-y-2">
-							{
-								week.map((d) => (
-									<div class="rounded-xl border border-neutral-200 p-3">
-										<div class="flex items-center justify-between text-sm">
-											<span class="font-semibold text-neutral-900">{d.day}</span>
-											<span class="font-semibold text-neutral-900">{d.total}</span>
-										</div>
-										<div class="mt-1.5 flex items-center gap-2 text-xs">
-											<span class="flex items-center gap-1 rounded-md bg-[#eef0fd] px-1.5 py-0.5 text-primary-600">
-												<LogIn class="h-3 w-3" /> {d.start}
-											</span>
-											<span class="flex items-center gap-1 rounded-md bg-[#eef0fd] px-1.5 py-0.5 text-primary-600">
-												<LogOut class="h-3 w-3" /> {d.end}
-											</span>
-											<span class="flex items-center gap-1 rounded-md bg-[#e7f4f2] px-1.5 py-0.5 text-[#0e8074]">
-												<Coffee class="h-3 w-3" /> {d.pause}
-											</span>
-										</div>
-									</div>
-								))
-							}
-						</div>
-					</div>
+					<nav aria-hidden="true" class="grid grid-cols-4 border-t border-neutral-200 bg-white pt-2 pb-3">
+						{
+							t.dashboard.nav.map((label, i) => {
+								const Icon = navIcons[i];
+								return (
+									<span class={`flex flex-col items-center gap-0.5 text-[10px] ${i === 0 ? 'text-neutral-900' : 'text-neutral-500'}`}>
+										<Icon class="h-5 w-5" stroke-width={1.75} />
+										{label}
+									</span>
+								);
+							})
+						}
+					</nav>
 				</div>
 			</div>
 		</section>
 
-		<!-- Comment ça marche -->
-		<section class="bg-white border-y border-[#E8E9EF]">
-			<div class="mx-auto max-w-6xl px-5 py-18">
-				<p class="font-mono text-sm uppercase tracking-widest text-primary-600">{t.howItWorks.eyebrow}</p>
-				<h2 class="mt-2 text-[28px] font-bold tracking-tight text-neutral-900">
+		<!-- Comment ça marche: a day on a timeline -->
+		<section id="comment" class="scroll-mt-20 border-y border-rule bg-card">
+			<div class="mx-auto max-w-6xl px-6 pt-20 pb-24">
+				<p class="label">{t.howItWorks.eyebrow}</p>
+				<h2 class="mt-5 max-w-xl text-4xl font-bold leading-[1.05] tracking-[-0.03em] text-ink sm:text-5xl">
 					{t.howItWorks.title}
 				</h2>
 
-				<div class="mt-10 grid gap-6 sm:grid-cols-3">
+				<ol class="mt-16 grid gap-12 sm:grid-cols-3 sm:gap-0">
 					{
-						t.steps.map((s) => (
-							<div class="rounded-2xl border border-neutral-200 bg-[#fafafc] p-6">
-								<span class="font-mono text-sm font-semibold text-primary-600">{s.n}</span>
-								<h3 class="mt-3 text-xl font-bold text-neutral-900">{s.title}</h3>
-								<p class="mt-2 text-sm leading-relaxed text-neutral-600">{s.text}</p>
-							</div>
+						t.steps.map((s, i) => (
+							<li class="relative border-l border-ink/80 pl-6 sm:border-t sm:border-l-0 sm:pt-8 sm:pl-0 sm:pr-10">
+								<span
+									class={`absolute -left-[5px] top-1 h-[9px] w-[9px] rounded-full sm:-top-[5px] sm:left-0 ${
+										i === t.steps.length - 1 ? 'bg-primary-600 ring-4 ring-primary-100' : 'bg-ink'
+									}`}
+								/>
+								<p class="font-mono text-3xl font-medium tabular-nums tracking-tight text-ink">{s.time}</p>
+								<h3 class="mt-4 text-xl font-semibold tracking-tight text-ink">
+									<span class="mr-2 font-mono text-sm font-normal text-ink-mute">{s.n}</span>
+									{s.title}
+								</h3>
+								<p class="mt-2 max-w-xs leading-relaxed text-ink-soft">{s.text}</p>
+							</li>
 						))
 					}
-				</div>
+				</ol>
 			</div>
 		</section>
 
 		<!-- Pourquoi Plannify -->
-		<section class="mx-auto grid max-w-6xl items-start gap-10 px-6 py-20 lg:grid-cols-2">
-			<div class="flex flex-col gap-5">
-				<p class="font-mono text-sm uppercase tracking-widest text-primary-600 leading-none">{t.whyPlannify.eyebrow}</p>
-				<h2 class="text-[28px] font-bold leading-tight tracking-tight text-neutral-900 leading-none">
+		<section class="mx-auto grid max-w-6xl items-center gap-16 px-6 py-24 lg:grid-cols-12">
+			<div class="lg:col-span-6">
+				<p class="label">{t.whyPlannify.eyebrow}</p>
+				<h2 class="mt-5 text-4xl font-bold leading-[1.05] tracking-[-0.03em] text-ink sm:text-5xl">
 					{t.whyPlannify.title}
 				</h2>
 
-				<ul class="space-y-5">
+				<dl class="mt-12 grid gap-x-8 gap-y-8 sm:grid-cols-2">
 					{
 						t.benefits.map((b) => (
-							<li class="flex gap-3">
-								<span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e7f4f2] text-[#0e8074]">
-									<Check class="h-3 w-3" />
-								</span>
-								<div>
-									<p class="font-bold text-neutral-900">{b.title}</p>
-									<p class="text-sm text-neutral-600">{b.text}</p>
-								</div>
-							</li>
-						))
-					}
-				</ul>
-			</div>
-
-			<div class="flex flex-col gap-4 rounded-2xl border border-neutral-200 p-6 shadow-lg shadow-neutral-200/50 bg-white">
-				<div class="flex items-center justify-between">
-					<div class="flex items-center gap-3">
-						<span class="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-50 text-rose-500">
-							<FileText class="h-5 w-5" />
-						</span>
-						<div>
-							<p class="font-bold text-neutral-900">{t.pdfCard.monthLabel}</p>
-							<p class="text-xs text-neutral-500">{t.pdfCard.reportType}</p>
-						</div>
-					</div>
-					<span class="flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
-						<Lock class="h-3 w-3" /> {t.pdfCard.definitive}
-					</span>
-				</div>
-
-				<span class="border-t border-neutral-200"></span>
-
-				<div class="space-y-2 text-sm">
-					{
-						detail.map((d) => (
-							<div class="grid grid-cols-3 items-center justify-between font-mono text-xs text-neutral-500">
-								<span class="shrink-0 text-neutral-700">{d.date}</span>
-								<span>{d.start} → {d.end}</span>
-								<span class="font-semibold text-neutral-900">{d.total}</span>
+							<div class="border-t border-rule pt-4">
+								<dt class="font-semibold text-ink">{b.title}</dt>
+								<dd class="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{b.text}</dd>
 							</div>
 						))
 					}
-				</div>
+				</dl>
+			</div>
 
-				<span class="border-t border-neutral-200"></span>
+			<!-- Monthly report as a paper sheet -->
+			<div class="lg:col-span-5 lg:col-start-8">
+				<div class="relative -rotate-1 bg-card px-7 pt-7 pb-8 shadow-[0_1px_0_var(--color-rule),0_24px_50px_-28px_rgb(60_52_35/0.5)] transition-transform duration-500 hover:rotate-0">
+					<div class="flex items-start justify-between">
+						<div>
+							<img src="/images/logo.png" alt="" class="h-3 opacity-80" />
+							<p class="mt-5 font-display text-2xl font-semibold tracking-tight text-ink">{t.pdfCard.monthLabel}</p>
+							<p class="font-mono text-xs text-ink-mute">{t.pdfCard.reportType}</p>
+						</div>
+						<span class="mt-1 rotate-[8deg] rounded-sm border-2 border-primary-600/70 px-2 py-1 font-mono text-xs font-semibold uppercase tracking-[0.15em] text-primary-600/80">
+							{t.pdfCard.definitive}
+						</span>
+					</div>
 
-				<div class="flex items-center justify-between">
-					<span class="font-mono text-[11px] uppercase tracking-wider text-neutral-400">
-						{t.pdfCard.totalMonth}
-					</span>
-					<span class="text-xl font-bold font-mono text-neutral-900">{t.pdfCard.totalValue}</span>
+					<table class="mt-7 w-full font-mono text-xs tabular-nums">
+						<tbody>
+							{
+								detail.map((d) => (
+									<tr class="border-b border-dashed border-rule">
+										<td class="py-2.5 text-ink-soft first-letter:uppercase">{d.date}</td>
+										<td class="py-2.5 text-ink-mute">{d.start}–{d.end}</td>
+										<td class="py-2.5 text-right font-semibold text-ink">{d.total}</td>
+									</tr>
+								))
+							}
+						</tbody>
+					</table>
+
+					<div class="mt-1 flex items-baseline justify-between border-b-[3px] border-double border-ink pt-5 pb-2">
+						<span class="font-mono text-xs text-ink-mute">{t.pdfCard.totalMonth}</span>
+						<span class="font-mono text-2xl font-semibold tabular-nums tracking-tight text-ink">{t.pdfCard.totalValue}</span>
+					</div>
 				</div>
 			</div>
 		</section>
 
 		<!-- L'application -->
-		<section class="bg-white border-y border-[#E8E9EF]">
-			<div class="mx-auto grid max-w-6xl items-start gap-10 px-6 py-20 ">
-				<div class="flex flex-col gap-5">
-					<p class="font-mono text-sm uppercase tracking-widest text-primary-600 leading-none">{t.appSection.eyebrow}</p>
-					<h2 class="text-[28px] font-bold tracking-tight text-neutral-900 leading-none">
-						{t.appSection.title}
-					</h2>
-					<p class="text-lg text-neutral-600">
+		<section class="overflow-hidden border-y border-rule bg-paper-deep">
+			<div class="mx-auto max-w-6xl px-6 pt-24">
+				<div class="grid gap-6 lg:grid-cols-12 lg:items-end">
+					<div class="lg:col-span-6">
+						<p class="label">{t.appSection.eyebrow}</p>
+						<h2 class="mt-5 text-4xl font-bold leading-[1.05] tracking-[-0.03em] text-ink sm:text-5xl">
+							{t.appSection.title}
+						</h2>
+					</div>
+					<p class="max-w-sm text-lg leading-relaxed text-ink-soft lg:col-span-5 lg:col-start-8">
 						{t.appSection.subtitle}
 					</p>
 				</div>
-				<img src="/images/dashboard.png" alt="Plannify" class="rounded-2xl border border-neutral-200 shadow-lg shadow-neutral-200/50" />
+				<!-- Desktop screenshot in a browser frame; wider than the viewport on mobile so it stays legible -->
+				<figure class="mt-14 -mb-px w-[760px] overflow-hidden rounded-t-xl border border-b-0 border-ink/15 bg-white shadow-[0_-20px_60px_-30px_rgb(60_52_35/0.35)] sm:w-full lg:w-[112%] lg:max-w-none">
+					<div aria-hidden="true" class="flex items-center gap-4 border-b border-neutral-200 bg-[#f1f0ed] px-4 py-2.5">
+						<div class="flex gap-1.5">
+							<span class="h-2.5 w-2.5 rounded-full bg-ink/15"></span>
+							<span class="h-2.5 w-2.5 rounded-full bg-ink/15"></span>
+							<span class="h-2.5 w-2.5 rounded-full bg-ink/15"></span>
+						</div>
+						<span class="mx-auto rounded-md bg-white px-10 py-1 font-mono text-[11px] text-ink-mute lg:-translate-x-[5%]">driver.plannify.be</span>
+					</div>
+					<Image
+						src={dashboardScreenshot}
+						alt={t.appSection.imageAlt}
+						widths={[760, 1140, 1520, 2280]}
+						sizes="(min-width: 1024px) 1290px, (min-width: 640px) 100vw, 760px"
+						loading="lazy"
+						class="aspect-[3024/1150] w-full object-cover object-left-top"
+					/>
+				</figure>
 			</div>
 		</section>
 
 		<!-- Vos données respectées -->
-		<section class="flex flex-col gap-10 mx-auto max-w-6xl px-6 py-20">
-			<div class="flex flex-col gap-3">
-				<p class="font-mono text-sm uppercase tracking-widest text-primary-600 leading-none">
-					{t.trustSection.eyebrow}
-				</p>
-				<h2 class="text-[28px] max-w-2xl font-bold leading-tight tracking-tight text-neutral-900 leading-none">
+		<section class="mx-auto grid max-w-6xl gap-14 px-6 py-24 lg:grid-cols-12">
+			<div class="lg:col-span-5">
+				<p class="label">{t.trustSection.eyebrow}</p>
+				<h2 class="mt-5 text-3xl font-bold leading-[1.1] tracking-[-0.025em] text-ink sm:text-4xl">
 					{t.trustSection.title}
 				</h2>
 			</div>
 
-			<div class="grid gap-5 grid-cols-2 md:grid-cols-4">
+			<dl class="grid gap-x-10 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
 				{
-					trust.map((item) => (
-						<div class="rounded-2xl border border-neutral-200 p-6 bg-white">
-							<span class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
-								<item.icon class="h-5 w-5" />
-							</span>
-							<h3 class="mt-4 font-bold text-neutral-900">{item.title}</h3>
-							<p class="mt-2 text-sm text-neutral-600">{item.text}</p>
+					t.trust.map((item, i) => (
+						<div class="flex gap-5 border-t border-rule py-6">
+							<span class="font-mono text-xs text-ink-mute">0{i + 1}</span>
+							<div>
+								<dt class="font-semibold text-ink">{item.title}</dt>
+								<dd class="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{item.text}</dd>
+							</div>
 						</div>
 					))
 				}
-			</div>
+			</dl>
 		</section>
 
 		<!-- CTA -->
-		<section class="bg-primary-600 py-18">
-			<div class="flex flex-col gap-5 mx-auto max-w-2xl px-6 text-center">
-				<h2 class="text-[28px] font-bold tracking-tight text-white leading-none">{t.cta.title}</h2>
-				<p class="text-lg text-primary-100 leading-none">
-					{t.cta.subtitle}
-				</p>
-				<div>
-					<a
-						href="https://driver.plannify.be/authentication/registration"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="inline-block rounded-lg bg-white px-7 py-3 text-base font-semibold text-primary-600 transition-colors hover:bg-primary-50"
-					>
+		<section class="mx-auto max-w-6xl px-6 pb-24">
+			<div class="relative overflow-hidden rounded-3xl bg-ink px-8 py-14 text-paper sm:px-14 sm:py-16">
+				<div
+					aria-hidden="true"
+					class="absolute -right-24 -bottom-40 h-96 w-96 rounded-full bg-primary-600/40 blur-3xl"
+				>
+				</div>
+				<div class="relative flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+					<div class="max-w-xl">
+						<h2 class="text-4xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-5xl">{t.cta.title}</h2>
+						<p class="mt-5 text-lg leading-relaxed text-paper/65">{t.cta.subtitle}</p>
+					</div>
+					<a href={registerUrl} target="_blank" rel="noopener noreferrer" class="btn-primary group self-start lg:self-auto">
 						{t.cta.button}
+						<ArrowRight class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
 					</a>
 				</div>
 			</div>

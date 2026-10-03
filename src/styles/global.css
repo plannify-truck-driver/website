@@ -1,15 +1,75 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #eef0fd;
-  --color-primary-100: #dce2fb;
-  --color-primary-600: #506ced;
-  --color-primary-700: #445cc9;
+  /* Single accent: the logo blue, slightly calmed down */
+  --color-primary-50: #eef1fc;
+  --color-primary-100: #dde3f8;
+  --color-primary-600: #4c68d9;
+  --color-primary-700: #3f57b8;
 
+  /* Warm paper + ink, one gray family */
+  --color-paper: #f5f3ee;
+  --color-paper-deep: #ece9e1;
+  --color-card: #fcfbf8;
+  --color-ink: #1b1d23;
+  --color-ink-soft: #4a4c53;
+  --color-ink-mute: #85868b;
+  --color-rule: #dcd8ce;
+
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Geist Variable", ui-sans-serif, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-body,
-header {
-  background-color: #fafafc;
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-600);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Faint grain to take the edge off flat surfaces */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-3 font-medium text-white shadow-[0_1px_0_rgb(255_255_255/0.25)_inset,0_8px_20px_-10px_rgb(63_87_184/0.7)] transition duration-200 hover:bg-primary-700 active:translate-y-px;
+  }
+
+  .label {
+    @apply flex items-center gap-3 font-mono text-xs font-medium text-ink-mute;
+  }
+  .label::before {
+    content: "";
+    @apply h-px w-6 bg-ink-mute/60;
+  }
 }
